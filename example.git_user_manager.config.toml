@@ -1,0 +1,6 @@
+[sarrus]
+name = "sarrus"
+email = "mail@example.org"
+user = "sarrus1"
+signingkey = "000000000"
+use_config_only = false

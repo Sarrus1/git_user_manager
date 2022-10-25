@@ -1,64 +1,94 @@
-use lazy_static::lazy_static;
-use regex::Regex;
+use clap::{Args, Parser, Subcommand};
+use dirs::home_dir;
 use serde_derive::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::Read;
+use std::io::{Read, Write};
+use std::path::Path;
+use std::process::exit;
 
 #[derive(Debug, Deserialize, Serialize)]
 struct User {
-    name: String,
-    email: String,
-    user: String,
-    signingkey: String,
-    use_config_only: bool,
+    name: Option<String>,
+    email: Option<String>,
+    user: Option<String>,
+    signingkey: Option<String>,
+    use_config_only: Option<bool>,
 }
 
-impl User {
-    fn insert(&mut self, key: &str, val: &str) {
-        let val_string = String::from(val.trim());
-        match key {
-            "name" => self.name = val_string,
-            "email" => self.email = val_string,
-            "user" => self.user = val_string,
-            "signingkey" => self.signingkey = val_string,
-            "useConfigOnly" => self.use_config_only = val_string == "true",
-            _ => println!("Unsuported user key {}", key),
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+#[command(propagate_version = true)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Replace the local git user
+    Use(Use),
+}
+
+#[derive(Args)]
+struct Use {
+    /// The name of the user to use
+    user: String,
+}
+
+fn main() {
+    let cli = Cli::parse();
+    match &cli.command {
+        Commands::Use(name) => {
+            use_user(&name.user);
         }
     }
 }
 
-fn read_config() -> HashMap<String, User> {
-    let mut file = match File::open("./test.toml") {
-        Ok(file) => file,
-        Err(_) => panic!("no such file"),
-    };
-    let mut file_contents = String::new();
-    file.read_to_string(&mut file_contents)
-        .ok()
-        .expect("failed to read!");
-    let data: HashMap<String, User> = toml::from_str(file_contents.as_str()).unwrap();
-    data
+/// Edit the local git config to use a specified user
+///
+/// # Arguments
+///
+/// * `key` - The key of the config in the store
+fn use_user(key: &String) -> Option<()> {
+    let store = read_user_store()?;
+    if !git_config_exists() {
+        panic!("Git config not found at ./.git/config")
+    }
+    let user = store.get(key.as_str()).unwrap();
+    set_user(user);
+
+    Some(())
 }
 
-fn main() {
-    let data = read_config();
-    let user_data = data.get("sarrus").unwrap();
-    let lines = lines_from_file("./.git/config");
-    let mut user = find_user_in_config(lines);
-    println!("{:#?}", user);
+/// Returns whether a git config if found
+fn git_config_exists() -> bool {
+    return Path::new("./.git/config").exists();
 }
 
-fn find_user_in_config(lines: Vec<String>) -> User {
+/// Sets the values of the passed user struct to the git config file
+///
+/// # Arguments
+///
+/// * `user` - The struct holding the values to write
+fn set_user(user: &User) -> Option<()> {
+    let lines = read_user_config("./.git/config");
+    let to_delete = find_user_in_config(&lines);
+    let new_lines = update_lines(&user, &to_delete, &lines)?;
+    write_user_config("./.git/config", &new_lines);
+
+    Some(())
+}
+
+/// Find the user section in git config and returns corresponding line numbers
+///
+/// # Arguments
+///
+/// * `lines` - Vector of lines of the git config file
+fn find_user_in_config(lines: &Vec<String>) -> Vec<usize> {
     let mut in_user = false;
-    let mut user = User {
-        name: String::from(""),
-        email: String::from(""),
-        user: String::from(""),
-        signingkey: String::from(""),
-        use_config_only: false,
-    };
-    for l in lines {
+    let mut to_delete: Vec<usize> = Vec::new();
+    for (l_nb, l) in lines.iter().enumerate() {
         let l_trimed = l.trim();
         if l_trimed.starts_with("#") {
             // Commented out line
@@ -66,6 +96,7 @@ fn find_user_in_config(lines: Vec<String>) -> User {
         }
         if l_trimed.starts_with("[user]") {
             in_user = true;
+            to_delete.push(l_nb);
             continue;
         }
         if !in_user || l_trimed.starts_with("[") {
@@ -73,27 +104,79 @@ fn find_user_in_config(lines: Vec<String>) -> User {
             in_user = false;
             continue;
         }
+        to_delete.push(l_nb);
+    }
+    return to_delete;
+}
 
-        match extract_config_value(&l) {
-            None => continue,
-            Some((key, val)) => {
-                user.insert(key.as_str(), val.as_str());
-            }
+/// Update the original lines from the git config
+///
+/// # Arguments
+///
+/// * `user` - User config to use
+/// * `to_delete` - Vector of line numbers to delete
+/// * `lines` - Original lines of the config file
+fn update_lines(user: &User, to_delete: &Vec<usize>, lines: &Vec<String>) -> Option<Vec<String>> {
+    let mut new_lines: Vec<String> = Vec::new();
+    for (l_nb, l) in lines.iter().enumerate() {
+        if to_delete.contains(&l_nb) {
+            continue;
         }
+        new_lines.push(l.to_string());
     }
-    return user;
+    let insert_idx = match to_delete.len() {
+        0 => lines.len(),
+        _ => to_delete[0],
+    };
+    if user.use_config_only.is_some() {
+        new_lines.insert(
+            insert_idx,
+            format!("\tuseConfigOnly = {:?}", user.use_config_only?),
+        )
+    }
+    if user.signingkey.is_some() {
+        new_lines.insert(
+            insert_idx,
+            format!("\tsigningkey = {}", user.signingkey.as_ref()?),
+        )
+    }
+    if user.user.is_some() {
+        new_lines.insert(insert_idx, format!("\tuser = {}", user.user.as_ref()?))
+    }
+    if user.email.is_some() {
+        new_lines.insert(insert_idx, format!("\temail = {}", user.email.as_ref()?))
+    }
+    if user.name.is_some() {
+        new_lines.insert(insert_idx, format!("\tname = {}", user.name.as_ref()?))
+    }
+    new_lines.insert(insert_idx, String::from("[user]"));
+
+    return Some(new_lines);
 }
 
-fn extract_config_value(input: &String) -> Option<(String, String)> {
-    lazy_static! {
-        static ref re: Regex = Regex::new(r"(\w+)\s*=\s*(.+)").unwrap();
+/// Write a git config file given a vector of strings
+///
+/// # Arguments
+///
+/// * `file_path` - Path to the git config file
+/// * `lines` - Lines to write
+fn write_user_config(file_path: &str, lines: &Vec<String>) {
+    let mut file = match File::create(file_path) {
+        Ok(file) => file,
+        Err(_) => panic!("Cannot write to git config"),
+    };
+    for l in lines {
+        write!(file, "{}\n", l).expect("Cannot write data");
     }
-    let caps = re.captures(input).unwrap();
-    return Some((String::from(&caps[1]), String::from(&caps[2])));
 }
 
-fn lines_from_file(filename: &str) -> Vec<String> {
-    let mut file = match File::open(filename) {
+/// Read a git config file and return its content as a vector of strings
+///
+/// # Arguments
+///
+/// * `file_path` - Path to the git config files
+fn read_user_config(file_paths: &str) -> Vec<String> {
+    let mut file = match File::open(file_paths) {
         Ok(file) => file,
         Err(_) => panic!("no such file"),
     };
@@ -105,5 +188,32 @@ fn lines_from_file(filename: &str) -> Vec<String> {
         .split("\n")
         .map(|s: &str| s.to_string())
         .collect();
-    lines
+
+    return lines;
+}
+
+/// Read and return the serialized user store
+fn read_user_store() -> Option<HashMap<String, User>> {
+    let store_path = home_dir()?.join("git_user_manager.config.toml");
+    if !store_path.exists() {
+        println!(
+            "Error: Git User Manager's configuration file does not exist at {:?}\n\
+            \n\
+            Create it by running\n\
+            \n\
+            \tgum config -a\n",
+            store_path
+        );
+        exit(1);
+    }
+    let mut file = match File::open(&store_path) {
+        Ok(file) => file,
+        Err(_) => panic!("Config file does not exist at {:?}", store_path),
+    };
+    let mut file_contents = String::new();
+    file.read_to_string(&mut file_contents)
+        .ok()
+        .expect(format!("Failed to read the config file at {:?}", store_path).as_str());
+    let data: HashMap<String, User> = toml::from_str(file_contents.as_str()).unwrap();
+    return Some(data);
 }
