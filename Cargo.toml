@@ -1,0 +1,13 @@
+[package]
+name = "git_user_manager"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+regex = "1.6.0"
+toml = "0.5.9"
+serde_derive = "1.0.147"
+serde = "1.0.147"
+lazy_static = "1.4.0"
