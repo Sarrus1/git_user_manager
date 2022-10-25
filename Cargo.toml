@@ -8,6 +8,9 @@ categories = ["development-tools"]
 repository = "https://github.com/Sarrus1/git_user_manager"
 license = "MIT"
 
+[[bin]]
+name = "gum"
+path = "src/main.rs"
 
 [dependencies]
 toml = "0.5.9"
