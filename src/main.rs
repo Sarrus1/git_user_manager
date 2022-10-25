@@ -1,4 +1,5 @@
 use clap::{Args, Parser, Subcommand};
+use colored::*;
 use dirs::home_dir;
 use read_input::shortcut::input;
 use serde_derive::{Deserialize, Serialize};
@@ -71,39 +72,45 @@ fn add_config() -> Option<()> {
         signingkey: None,
         use_config_only: None,
     };
-    print!("Enter the name of the configuration: ");
+
+    print!("{}", "Enter the name of the configuration: ".yellow());
     let key = input::<String>().get();
 
     if store.contains_key(&key) {
-        println!("User \"{}\" already exists.", key);
+        println!(
+            "{} {} {}",
+            "User".red(),
+            key.underline(),
+            "already exists.".red()
+        );
         exit(1);
     }
 
-    print!("user: ");
+    print!("{}", "user: ".yellow());
     let user = input::<String>().get();
     if user != "" {
         user_config.user = Some(user);
     }
 
-    print!("name: ");
+    print!("{}", "name: ".yellow());
     let name = input::<String>().get();
     if name != "" {
         user_config.name = Some(name);
     }
 
-    print!("email: ");
+    print!("{}", "email: ".yellow());
     let email = input::<String>().get();
     if email != "" {
         user_config.email = Some(email);
     }
 
-    print!("signingkey: ");
+    print!("{}", "signingkey: ".yellow());
     let signingkey = input::<String>().get();
     if signingkey != "" {
         user_config.signingkey = Some(signingkey);
     }
 
-    print!("useConfigOnly: ");
+    print!("{}", "useConfigOnly: ".yellow());
     user_config.use_config_only = Some(input::<bool>().get());
 
     store.insert(key, user_config);

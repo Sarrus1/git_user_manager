@@ -12,3 +12,4 @@ serde = "1.0.147"
 dirs = "4.0.0"
 clap = { version = "4.0.18", features = ["derive"] }
 read_input = "0.8.6"
+colored = "2.0.0"
