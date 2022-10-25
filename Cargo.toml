@@ -2,8 +2,12 @@
 name = "git_user_manager"
 version = "0.1.0"
 edition = "2021"
+description = "cli tool to quickly switch between git users"
+keywords = ["git", "manager", "config", "user"]
+categories = ["development-tools"]
+repository = "https://github.com/Sarrus1/git_user_manager"
+license = "MIT"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 toml = "0.5.9"
