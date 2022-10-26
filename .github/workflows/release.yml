@@ -30,8 +30,7 @@ jobs:
         with:
           RUSTTARGET: ${{ matrix.target }}
           ARCHIVE_TYPES: ${{ matrix.archive }}
-          #ARCHIVE_NAME: git_user_manager-${GITHUB_REF#refs/*/}-${{ matrix.name }}
-          ARCHIVE_NAME: git_user_manager-0.1.0-${{ matrix.name }}
+          ARCHIVE_NAME: git_user_manager-${{ github.ref }}-${{ matrix.name }}
 
   cargo:
     runs-on: ubuntu-latest
@@ -68,5 +67,5 @@ jobs:
           target_linux_amd64: true
           target_linux_arm64: false
           update_readme_table: true
-          skip_commit: true
+          skip_commit: false
           debug: true
