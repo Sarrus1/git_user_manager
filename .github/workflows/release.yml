@@ -16,10 +16,10 @@ jobs:
             archive: zip
             name: windows-amd64
           - target: x86_64-unknown-linux-musl
-            archive: tar.gz tar.xz
+            archive: tar.gz
             name: linux-amd64
           - target: x86_64-apple-darwin
-            archive: tar.gz tar.xz
+            archive: tar.gz
             name: darwin-amd64
     steps:
       - uses: actions/checkout@master
@@ -53,7 +53,7 @@ jobs:
     needs: release
     steps:
       - name: Release to Homebrew tap
-        uses: Justintime50/homebrew-releaser@v1
+        uses: Justintime50/homebrew-releaser@v0.14.1
         with:
           homebrew_owner: Sarrus1
           homebrew_tap: homebrew-formulas
