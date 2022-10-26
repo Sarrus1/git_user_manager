@@ -42,3 +42,25 @@ jobs:
         with:
           registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
           args: --allow-dirty
+
+  homebrew-releaser:
+    runs-on: ubuntu-latest
+    name: homebrew-releaser
+    steps:
+      - name: Release to Homebrew tap
+        uses: Justintime50/homebrew-releaser@v1
+        with:
+          homebrew_owner: Sarrus1
+          homebrew_tap: homebrew-formulas
+          formula_folder: formula
+          github_token: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+          commit_owner: Sarrus1
+          commit_email: 63302440+Sarrus1@users.noreply.github.com
+          install: 'bin.install "gum" => "gum"'
+          target_darwin_amd64: true
+          target_darwin_arm64: false
+          target_linux_amd64: true
+          target_linux_arm64: false
+          update_readme_table: true
+          skip_commit: true
+          debug: true
