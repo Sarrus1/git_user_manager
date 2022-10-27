@@ -37,7 +37,7 @@
 1. Setup tap: `brew tap Sarrus1/formulas`
 2. Install: `brew install git_user_manager`
 
-### Manual
+#### Manual
 
 1. Download the [latest release](https://github.com/Sarrus1/git_user_manager/releases/latest) for Linux or MacOS.
 2. Extract the tar file and move `gum` to `/usr/local/bin`.
