@@ -30,15 +30,16 @@
 2. Extract the zip file and move `gum.exe` to `C:\Windows\System32`.
 3. In your command prompt, run `gum --help`.
 
-### Linux
+### Linux/MacOS
 
-1. Download the [latest release](https://github.com/Sarrus1/git_user_manager/releases/latest) for linux.
-2. Extract the tar file and move `gum` to `/usr/local/bin`.
-3. In your command prompt, run `gum --help`.
+#### Homebrew
 
-### MacOS
+1. Setup tap: `brew tap Sarrus1/formulas`
+2. Install: `brew install git_user_manager`
 
-1. Download the [latest release](https://github.com/Sarrus1/git_user_manager/releases/latest) for mac.
+### Manual
+
+1. Download the [latest release](https://github.com/Sarrus1/git_user_manager/releases/latest) for Linux or MacOS.
 2. Extract the tar file and move `gum` to `/usr/local/bin`.
 3. In your command prompt, run `gum --help`.
 
