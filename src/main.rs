@@ -1,4 +1,5 @@
 use clap::{Args, Parser, Subcommand};
+use colored::Colorize;
 use store::add_to_store;
 use user::use_user;
 
@@ -33,7 +34,7 @@ struct Use {
 #[derive(Args)]
 struct Store {
     /// Add a user to the store
-    #[arg(short, long)]
+    #[arg(short, long, exclusive = true)]
     add: bool,
 }
 
@@ -46,7 +47,13 @@ fn main() {
         Commands::Store(store) => {
             if store.add {
                 add_to_store();
+                return;
             }
+            println!(
+                "No argument specified, for more details, use:\n\n\
+                \t{}\n",
+                "gum store --help".yellow()
+            )
         }
     }
 }
