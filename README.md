@@ -12,11 +12,14 @@
       />
     </a>
     <a href="https://github.com/Sarrus1/git_user_manager/releases/latest">
-      <img 
-        alt="GitHub all releases"
-        src="https://img.shields.io/github/downloads/sarrus1/git_user_manager/total">
+      <img alt="Crates.io" src="https://img.shields.io/crates/d/git_user_manager">
     </a>
+    <a href="https://github.com/Sarrus1/git_user_manager/releases/latest">
+      <img alt="Crates.io" src="https://img.shields.io/crates/v/git_user_manager">
+    </a>
+    <img alt="GitHub" src="https://img.shields.io/github/license/Sarrus1/git_user_manager">
   </p>
+  <img src="https://raw.githubusercontent.com/Sarrus1/git_user_manager/main/img/logo.png" alt="Logo">
 </div>
 
 ## How to install
