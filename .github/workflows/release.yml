@@ -34,6 +34,13 @@ jobs:
       - name: Add changelog
         id: changelog
         uses: mindsers/changelog-reader-action@v2.0.0
+      - name: Edit Release
+        uses: irongut/EditRelease@v1.2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          id: ${{ github.event.release.id }}
+          body: ${{ steps.changelog.outputs.changes }}
+          replacebody: true
 
   cargo:
     runs-on: ubuntu-latest
