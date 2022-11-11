@@ -17,16 +17,16 @@ pub fn read_user_store(create: bool) -> Option<HashMap<String, User>> {
     if !store_path.exists() {
         if create {
             match File::create(&store_path) {
-                Ok(_file) => println!("Config file did not exist and was created."),
-                Err(_) => panic!("Config file does not exist at {:?}", store_path),
+                Ok(_file) => println!("Store file did not exist and was created."),
+                Err(_) => panic!("Store file does not exist at {:?}", store_path),
             };
         } else {
             println!(
-                "Error: Git User Manager's configuration file does not exist at {:?}\n\
+                "Error: Git User Manager's store file does not exist at {:?}\n\
                 \n\
                 Create it by running\n\
                 \n\
-                \tgum config -a\n",
+                \tgum store -a\n",
                 store_path
             );
             exit(1);

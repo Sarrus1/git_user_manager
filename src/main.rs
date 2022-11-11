@@ -1,9 +1,11 @@
 use clap::{Args, Parser, Subcommand};
 use colored::Colorize;
+use list::print_all_users;
 use store::add_to_store;
 use user::use_user;
 
 pub mod config;
+pub mod list;
 pub mod store;
 pub mod user;
 pub mod utils;
@@ -23,6 +25,16 @@ enum Commands {
 
     /// Edit the store
     Store(Store),
+
+    /// List all available users
+    List(List),
+}
+
+#[derive(Args)]
+struct List {
+    /// Enable detailed view of each user
+    #[arg(short, long)]
+    detailed: bool,
 }
 
 #[derive(Args)]
@@ -41,11 +53,11 @@ struct Store {
 fn main() {
     let cli = Cli::parse();
     match &cli.command {
-        Commands::Use(use_) => {
-            use_user(&use_.user);
+        Commands::Use(args) => {
+            use_user(&args.user);
         }
-        Commands::Store(store) => {
-            if store.add {
+        Commands::Store(args) => {
+            if args.add {
                 add_to_store();
                 return;
             }
@@ -54,6 +66,10 @@ fn main() {
                 \t{}\n",
                 "gum store --help".yellow()
             )
+        }
+        Commands::List(args) => {
+            print_all_users(args.detailed);
+            return;
         }
     }
 }
