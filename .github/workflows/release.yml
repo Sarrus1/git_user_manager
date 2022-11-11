@@ -31,6 +31,9 @@ jobs:
           RUSTTARGET: ${{ matrix.target }}
           ARCHIVE_TYPES: ${{ matrix.archive }}
           ARCHIVE_NAME: git_user_manager-${{ github.event.release.tag_name }}-${{ matrix.name }}
+      - name: Add changelog
+        id: changelog
+        uses: mindsers/changelog-reader-action@v2.0.0
 
   cargo:
     runs-on: ubuntu-latest
