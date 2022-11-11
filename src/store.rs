@@ -5,6 +5,7 @@ use std::{collections::HashMap, fs::File, io::Read, process::exit};
 use colored::Colorize;
 use read_input::shortcut::input;
 
+use crate::list::print_all_users;
 use crate::user::User;
 
 /// Read and return the serialized user store
@@ -74,7 +75,7 @@ pub fn add_to_store() -> Option<()> {
         use_config_only: None,
     };
 
-    print!("{}", "Enter the name of the configuration: ".yellow());
+    print!("{}", "Enter the id of the configuration: ".yellow());
     let key = input::<String>().get();
 
     if store.contains_key(&key) {
@@ -116,6 +117,44 @@ pub fn add_to_store() -> Option<()> {
 
     store.insert(key, user_config);
     write_user_store(store);
+
+    Some(())
+}
+
+/// Delete an entry from the store from user input
+pub fn delete_from_store() -> Option<()> {
+    let mut store = read_user_store(true)?;
+
+    print!("{}", "Enter the id of the user to delete: ".yellow());
+    let key = input::<String>().get();
+
+    if !store.contains_key(&key) {
+        println!(
+            "{} {} {}",
+            "User".red(),
+            key.bold(),
+            "does not exist. Choices are:".red(),
+        );
+        print_all_users(false);
+        exit(1);
+    }
+
+    print!(
+        "{} {} {} Type \"yes\" or \"no\": ",
+        "Are you sure you wish to delete user".yellow(),
+        key.bold(),
+        "from the config?".yellow(),
+    );
+    let accept = input::<String>().get().to_lowercase();
+
+    if accept != "y" && accept != "yes" {
+        println!("Aborted");
+        exit(1)
+    }
+
+    store.remove(&key);
+    write_user_store(store);
+    println!("User {} was successfully delete.", key);
 
     Some(())
 }

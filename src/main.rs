@@ -1,7 +1,7 @@
 use clap::{Args, Parser, Subcommand};
 use colored::Colorize;
 use list::print_all_users;
-use store::add_to_store;
+use store::{add_to_store, delete_from_store};
 use user::use_user;
 
 pub mod config;
@@ -48,6 +48,10 @@ struct Store {
     /// Add a user to the store
     #[arg(short, long, exclusive = true)]
     add: bool,
+
+    /// Delete a user from the store
+    #[arg(short, long, exclusive = true)]
+    delete: bool,
 }
 
 fn main() {
@@ -59,6 +63,10 @@ fn main() {
         Commands::Store(args) => {
             if args.add {
                 add_to_store();
+                return;
+            }
+            if args.delete {
+                delete_from_store();
                 return;
             }
             println!(
