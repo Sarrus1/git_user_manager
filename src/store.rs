@@ -1,9 +1,9 @@
+use colored::Colorize;
+use dialoguer::Confirm;
 use dirs::home_dir;
+use read_input::shortcut::input;
 use std::io::Write;
 use std::{collections::HashMap, fs::File, io::Read, process::exit};
-
-use colored::Colorize;
-use read_input::shortcut::input;
 
 use crate::list::print_all_users;
 use crate::user::User;
@@ -139,15 +139,17 @@ pub fn delete_from_store() -> Option<()> {
         exit(1);
     }
 
-    print!(
-        "{} {} {} Type \"yes\" or \"no\": ",
-        "Are you sure you wish to delete user".yellow(),
-        key.bold(),
-        "from the config?".yellow(),
-    );
-    let accept = input::<String>().get().to_lowercase();
+    let accept = Confirm::new()
+        .with_prompt(format!(
+            "{} {} {}",
+            "Are you sure you want to delete user".yellow(),
+            key.bold(),
+            "from the config?".yellow(),
+        ))
+        .interact()
+        .unwrap();
 
-    if accept != "y" && accept != "yes" {
+    if !accept {
         println!("Aborted");
         exit(1)
     }
