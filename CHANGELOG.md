@@ -1,5 +1,16 @@
 ## Release Notes
 
+## [0.3.0]
+
+### Added
+
+- Added a selection prompt when deleting users.
+- Added a confirmation prompt when deleting users.
+
+### Fixed
+
+- Unhandled panic.
+
 ## [0.2.0]
 
 ### Added
