@@ -1,11 +1,11 @@
 use colored::Colorize;
-use dialoguer::Confirm;
+use dialoguer::console::Term;
+use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use dirs::home_dir;
 use read_input::shortcut::input;
 use std::io::Write;
 use std::{collections::HashMap, fs::File, io::Read, process::exit};
 
-use crate::list::print_all_users;
 use crate::user::User;
 
 /// Read and return the serialized user store
@@ -124,20 +124,24 @@ pub fn add_to_store() -> Option<()> {
 /// Delete an entry from the store from user input
 pub fn delete_from_store() -> Option<()> {
     let mut store = read_user_store(true)?;
-
-    print!("{}", "Enter the id of the user to delete: ".yellow());
-    let key = input::<String>().get();
-
-    if !store.contains_key(&key) {
-        println!(
-            "{} {} {}",
-            "User".red(),
-            key.bold(),
-            "does not exist. Choices are:".red(),
-        );
-        print_all_users(false);
-        exit(1);
+    let mut keys: Vec<String> = vec![];
+    for key in store.keys() {
+        keys.push(key.clone());
     }
+
+    let key_id = Select::with_theme(&ColorfulTheme::default())
+        .items(&keys)
+        .with_prompt("Select a user to delete:")
+        .interact_on_opt(&Term::stderr())
+        .unwrap();
+
+    let key = match key_id {
+        Some(index) => keys[index].clone(),
+        None => {
+            println!("Nothing selected");
+            exit(1)
+        }
+    };
 
     let accept = Confirm::new()
         .with_prompt(format!(
@@ -156,7 +160,7 @@ pub fn delete_from_store() -> Option<()> {
 
     store.remove(&key);
     write_user_store(store);
-    println!("User {} was successfully delete.", key);
+    println!("User {} was successfully deleted.", key);
 
     Some(())
 }
