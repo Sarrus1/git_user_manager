@@ -1,4 +1,6 @@
+use colored::Colorize;
 use serde_derive::{Deserialize, Serialize};
+use std::process::exit;
 
 use crate::{
     config::{read_user_config, update_config_lines, write_user_config},
@@ -15,7 +17,8 @@ pub struct User {
     pub use_config_only: Option<bool>,
 }
 
-/// Edit the local git config to use a specified user
+/// Edit the local git config to use a specified user.
+/// Exits if the user does not exist.
 ///
 /// # Arguments
 ///
@@ -25,13 +28,21 @@ pub fn use_user(key: &String) -> Option<()> {
     if !git_config_exists() {
         panic!("Git config not found at ./.git/config")
     }
-    let user = store.get(key.as_str()).unwrap();
-    set_user(user);
+    let user = store.get(key.as_str());
+    if user.is_none() {
+        println!("User {} does not exist.", key.bold());
+        println!(
+            "Use {} to list all the available users.",
+            "gum list".yellow()
+        );
+        exit(1);
+    }
+    set_user(user?);
 
     Some(())
 }
 
-/// Sets the values of the passed user struct to the git config file
+/// Sets the values of the passed user struct to the git config file.
 ///
 /// # Arguments
 ///
@@ -45,7 +56,7 @@ pub fn set_user(user: &User) -> Option<()> {
     Some(())
 }
 
-/// Find the user section in git config and returns corresponding line numbers
+/// Find the user section in git config and returns corresponding line numbers.
 ///
 /// # Arguments
 ///
