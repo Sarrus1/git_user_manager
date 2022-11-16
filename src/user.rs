@@ -4,7 +4,8 @@ use std::process::exit;
 
 use crate::{
     config::{read_user_config, update_config_lines, write_user_config},
-    store::read_user_store,
+    list::print_all_users,
+    store::{get_key_from_prompt, read_user_store},
     utils::git_config_exists,
 };
 
@@ -22,19 +23,17 @@ pub struct User {
 ///
 /// # Arguments
 ///
-/// * `key` - The key of the config in the store
-pub fn use_user(key: &String) -> Option<()> {
+/// * `input_key` - Optional key of the user to use
+pub fn use_user(input_key: &Option<String>) -> Option<()> {
     let store = read_user_store(false)?;
+    let key = get_key_from_prompt(&input_key);
     if !git_config_exists() {
         panic!("Git config not found at ./.git/config")
     }
     let user = store.get(key.as_str());
     if user.is_none() {
-        println!("User {} does not exist.", key.bold());
-        println!(
-            "Use {} to list all the available users.",
-            "gum list".yellow()
-        );
+        println!("User {} does not exist. Available users are:", key.bold());
+        print_all_users(false);
         exit(1);
     }
     set_user(user?);

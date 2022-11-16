@@ -121,33 +121,45 @@ pub fn add_to_store() -> Option<()> {
     Some(())
 }
 
+/// Returns the passed key or prompts the user to select one
+///
+/// # Arguments
+///
+/// * `input_key` - Optional key of the user
+pub fn get_key_from_prompt(input_key: &Option<String>) -> String {
+    let store = read_user_store(true).unwrap();
+    if input_key.is_some() {
+        return String::from(input_key.as_ref().unwrap());
+    }
+
+    let mut keys: Vec<String> = vec![];
+    for key in store.keys() {
+        keys.push(key.clone());
+    }
+
+    let key_id = Select::with_theme(&ColorfulTheme::default())
+        .items(&keys)
+        .with_prompt("Select a user to delete:")
+        .interact_on_opt(&Term::stderr())
+        .unwrap();
+
+    return match key_id {
+        Some(index) => keys[index].clone(),
+        None => {
+            println!("Nothing selected");
+            exit(1)
+        }
+    };
+}
+
 /// Delete an entry from the store from user input
+///
+/// # Arguments
+///
+/// * `input_key` - Optional key of the user to delete
 pub fn delete_from_store(input_key: &Option<String>) -> Option<()> {
     let mut store = read_user_store(true)?;
-    let key: String;
-
-    if input_key.is_none() {
-        let mut keys: Vec<String> = vec![];
-        for key in store.keys() {
-            keys.push(key.clone());
-        }
-
-        let key_id = Select::with_theme(&ColorfulTheme::default())
-            .items(&keys)
-            .with_prompt("Select a user to delete:")
-            .interact_on_opt(&Term::stderr())
-            .unwrap();
-
-        key = match key_id {
-            Some(index) => keys[index].clone(),
-            None => {
-                println!("Nothing selected");
-                exit(1)
-            }
-        };
-    } else {
-        key = String::from(input_key.as_ref().unwrap())
-    }
+    let key = get_key_from_prompt(&input_key);
 
     let accept = Confirm::new()
         .with_prompt(format!(

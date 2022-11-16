@@ -35,7 +35,7 @@ enum Commands {
 #[derive(Args)]
 struct Use {
     /// The name of the user to use
-    user: String,
+    user: Option<String>,
 }
 
 #[derive(Args)]
