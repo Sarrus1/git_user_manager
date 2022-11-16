@@ -33,17 +33,13 @@ enum Commands {
 }
 
 #[derive(Args)]
-struct List {
-    /// Enable detailed view of each user
-    #[arg(short, long)]
-    detailed: bool,
-}
-
-#[derive(Args)]
 struct Use {
     /// The name of the user to use
     user: String,
 }
+
+#[derive(Args)]
+struct Add {}
 
 #[derive(Args)]
 struct Delete {
@@ -53,13 +49,10 @@ struct Delete {
 }
 
 #[derive(Args)]
-struct Add {}
-
-#[derive(Args)]
-struct Store {
-    /// Delete a user from the store
-    #[arg(short, long, exclusive = true)]
-    delete: bool,
+struct List {
+    /// Enable detailed view of each user
+    #[arg(short, long)]
+    detailed: bool,
 }
 
 fn main() {
