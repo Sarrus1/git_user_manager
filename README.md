@@ -47,8 +47,12 @@
 
 ### Add a user to the store
 
-Users are stored in the store. To add one, use `gum store -a` and follow the prompt.
+Users are stored in the store. To add one, use `gum add` and follow the prompt.
 
 ### Switch to a user
 
-When in a git repository, switch to a different user by using `gum use <name>`.
+When in a git repository, switch to a different user by using `gum use` and follow the prompt or `gum use <user>`.
+
+### Additional commands
+
+Use `gum -h` for additional commands.
