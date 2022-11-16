@@ -1,5 +1,11 @@
 ## Release Notes
 
+## [0.4.0]
+
+### Improved
+
+- Improved the way subcommands work.
+
 ## [0.3.0]
 
 ### Added
