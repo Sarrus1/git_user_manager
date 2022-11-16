@@ -1,5 +1,4 @@
 use clap::{Args, Parser, Subcommand};
-use colored::Colorize;
 use list::print_all_users;
 use store::{add_to_store, delete_from_store};
 use user::use_user;
@@ -23,8 +22,11 @@ enum Commands {
     /// Replace the local git user
     Use(Use),
 
-    /// Edit the store
-    Store(Store),
+    /// Add a user to the store
+    Add(Add),
+
+    /// Delete a user from the store
+    Delete(Delete),
 
     /// List all available users
     List(List),
@@ -44,11 +46,17 @@ struct Use {
 }
 
 #[derive(Args)]
-struct Store {
-    /// Add a user to the store
-    #[arg(short, long, exclusive = true)]
-    add: bool,
+struct Delete {
+    /// The name of the user to delete
+    #[arg(index = 1)]
+    user: Option<String>,
+}
 
+#[derive(Args)]
+struct Add {}
+
+#[derive(Args)]
+struct Store {
     /// Delete a user from the store
     #[arg(short, long, exclusive = true)]
     delete: bool,
@@ -60,24 +68,14 @@ fn main() {
         Commands::Use(args) => {
             use_user(&args.user);
         }
-        Commands::Store(args) => {
-            if args.add {
-                add_to_store();
-                return;
-            }
-            if args.delete {
-                delete_from_store();
-                return;
-            }
-            println!(
-                "No argument specified, for more details, use:\n\n\
-                \t{}\n",
-                "gum store --help".yellow()
-            )
+        Commands::Delete(args) => {
+            delete_from_store(&args.user);
+        }
+        Commands::Add(_) => {
+            add_to_store();
         }
         Commands::List(args) => {
             print_all_users(args.detailed);
-            return;
         }
     }
 }
