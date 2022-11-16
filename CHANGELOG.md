@@ -1,5 +1,11 @@
 ## Release Notes
 
+## [0.4.1]
+
+### Fixed
+
+- Fixed unnecessary required argument.
+
 ## [0.4.0]
 
 ### Improved
