@@ -1,6 +1,6 @@
 [package]
 name = "git_user_manager"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2021"
 description = "cli tool to quickly switch between git users"
 keywords = ["git", "manager", "config", "user"]

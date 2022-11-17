@@ -1,5 +1,11 @@
 ## Release Notes
 
+## [0.6.0]
+
+### Added
+
+- Added a command to edit existing configs.
+
 ## [0.5.0]
 
 ### Added
