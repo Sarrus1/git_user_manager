@@ -1,5 +1,11 @@
 ## Release Notes
 
+## [0.5.0]
+
+### Added
+
+- Added a parsing feature for existing configs.
+
 ## [0.4.1]
 
 ### Fixed
