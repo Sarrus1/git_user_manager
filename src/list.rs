@@ -21,7 +21,7 @@ pub fn print_all_users(detailed: bool) -> Option<()> {
 /// * `key` - Store key of the user
 /// * `user` - User object to print
 /// * `detailed` - Whether to print the attributes of the user
-fn print_user(key: &String, user: &User, detailed: bool) -> Option<()> {
+pub fn print_user(key: &String, user: &User, detailed: bool) -> Option<()> {
     println!("• {}", key.bold());
     if !detailed {
         return Some(());

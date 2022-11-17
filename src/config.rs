@@ -26,8 +26,8 @@ pub fn write_user_config(file_path: &str, lines: &Vec<String>) {
 /// # Arguments
 ///
 /// * `file_path` - Path to the git config files
-pub fn read_user_config(file_paths: &str) -> Vec<String> {
-    let mut file = match File::open(file_paths) {
+pub fn read_user_config(file_path: &str) -> Vec<String> {
+    let mut file = match File::open(file_path) {
         Ok(file) => file,
         Err(_) => panic!("no such file"),
     };

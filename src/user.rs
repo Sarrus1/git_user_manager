@@ -18,6 +18,20 @@ pub struct User {
     pub use_config_only: Option<bool>,
 }
 
+impl User {
+    pub fn insert(&mut self, key: &str, val: &str) {
+        let val_string = String::from(val.trim());
+        match key {
+            "name" => self.name = Some(val_string),
+            "email" => self.email = Some(val_string),
+            "user" => self.user = Some(val_string),
+            "signingkey" => self.signingkey = Some(val_string),
+            "useConfigOnly" => self.use_config_only = Some(val_string == "true"),
+            _ => println!("Unsuported user key {}", key),
+        }
+    }
+}
+
 /// Edit the local git config to use a specified user.
 /// Exits if the user does not exist.
 ///

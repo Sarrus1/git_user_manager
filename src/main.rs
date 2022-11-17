@@ -1,10 +1,13 @@
 use clap::{Args, Parser, Subcommand};
 use list::print_all_users;
+use parse::parse_config_into_store;
 use store::{add_to_store, delete_from_store};
 use user::use_user;
 
 pub mod config;
 pub mod list;
+pub mod parse;
+pub mod reader;
 pub mod store;
 pub mod user;
 pub mod utils;
@@ -30,6 +33,9 @@ enum Commands {
 
     /// List all available users
     List(List),
+
+    /// Parse a user from the local Git config
+    Parse(Parse),
 }
 
 #[derive(Args)]
@@ -55,6 +61,9 @@ struct List {
     detailed: bool,
 }
 
+#[derive(Args)]
+struct Parse {}
+
 fn main() {
     let cli = Cli::parse();
     match &cli.command {
@@ -69,6 +78,9 @@ fn main() {
         }
         Commands::List(args) => {
             print_all_users(args.detailed);
+        }
+        Commands::Parse(_) => {
+            parse_config_into_store();
         }
     }
 }

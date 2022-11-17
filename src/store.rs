@@ -51,7 +51,7 @@ pub fn read_user_store(create: bool) -> Option<HashMap<String, User>> {
 /// # Arguments
 ///
 /// * `store` - The store to write
-pub fn write_user_store(store: HashMap<String, User>) -> Option<()> {
+pub fn write_user_store(store: &HashMap<String, User>) -> Option<()> {
     let store_path = home_dir()?.join(".git_user_manager.config.toml");
     let mut file = match File::create(&store_path) {
         Ok(file) => file,
@@ -116,7 +116,7 @@ pub fn add_to_store() -> Option<()> {
     user_config.use_config_only = Some(input::<bool>().get());
 
     store.insert(key, user_config);
-    write_user_store(store);
+    write_user_store(&store);
 
     Some(())
 }
@@ -177,7 +177,7 @@ pub fn delete_from_store(input_key: &Option<String>) -> Option<()> {
     }
 
     store.remove(&key);
-    write_user_store(store);
+    write_user_store(&store);
     println!("User {} was successfully deleted.", key);
 
     Some(())
