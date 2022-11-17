@@ -139,7 +139,7 @@ pub fn get_key_from_prompt(input_key: &Option<String>) -> String {
 
     let key_id = Select::with_theme(&ColorfulTheme::default())
         .items(&keys)
-        .with_prompt("Select a user to delete:")
+        .with_prompt("Select a user:")
         .interact_on_opt(&Term::stderr())
         .unwrap();
 

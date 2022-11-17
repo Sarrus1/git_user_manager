@@ -19,6 +19,12 @@ pub struct User {
 }
 
 impl User {
+    /// Insert a value to the object given its key as a string
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - Key of the value to insert.
+    /// * `val` - Value to insert.
     pub fn insert(&mut self, key: &str, val: &str) {
         let val_string = String::from(val.trim());
         match key {
@@ -29,6 +35,16 @@ impl User {
             "useConfigOnly" => self.use_config_only = Some(val_string == "true"),
             _ => println!("Unsuported user key {}", key),
         }
+    }
+
+    /// Convert an index to a key.
+    ///
+    /// # Arguments
+    ///
+    /// * `index` - Index of the key.
+    pub fn index_to_key(&self, index: usize) -> String {
+        let keys = ["name", "email", "user", "signingkey", "useConfigOnly"];
+        return keys[index].to_string();
     }
 }
 
