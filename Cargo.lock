@@ -155,7 +155,7 @@ dependencies = [
 
 [[package]]
 name = "git_user_manager"
-version = "0.6.0"
+version = "0.6.1"
 dependencies = [
  "clap",
  "colored",

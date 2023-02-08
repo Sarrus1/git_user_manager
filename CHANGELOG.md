@@ -1,5 +1,11 @@
 ## Release Notes
 
+## [0.6.1]
+
+### Added
+
+- Added new Github releases.
+
 ## [0.6.0]
 
 ### Added
