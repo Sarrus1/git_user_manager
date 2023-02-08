@@ -44,7 +44,7 @@ pub fn find_user_in_config() -> User {
 }
 
 /// Extract a Git config value from a line.
-/// Return `None` if there is no match.
+/// Return [None] if there is no match.
 ///
 /// # Arguments
 ///
